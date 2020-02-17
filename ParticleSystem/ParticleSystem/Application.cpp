@@ -4,23 +4,50 @@
 #include "ParticleSystem.h"
 
 #include <time.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 int main()
 {
 	nsParticleSystem::Window *pWindow = new nsParticleSystem::Window();
-	bool bRturnValue = pWindow->Intialize();
-	if (!bRturnValue)
+	if (pWindow->Intialize(false) == false)
 	{
 		std::cout << "Failed to Create OpenGL Window";
 		return false;
 	}
 	
+	nsParticleSystem::ParticleSystem *pPartileSystem = new nsParticleSystem::ParticleSystem();
+	if (pPartileSystem->Initialize() == false)
+	{
+		std::cout << "Failed to Initialize Particle System";
+		return false;
+	}
+
+	//Set View Matrix
+	glm::vec3 vCameraPos = glm::vec3(0, 0, 5);
+	glm::vec3 vCameraDir = glm::vec3(0, 0, 1);
+	glm::vec3 vUp = glm::vec3(0, 1, 0);
+	glm::mat4 matView = glm::lookAt(vCameraPos, vCameraDir, vUp);
+
+
+	int count = 0;
+	const GLFWvidmode *pScreen = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
+	float fAspectRatio = 1000.0f / 800.0f; //(float)pScreen->width / (float)pScreen->height;
+	//Set Projection Matrix
+	glm::mat4 matProj = glm::perspective(glm::radians(60.0f), fAspectRatio, 0.1f, 10000.0f);
+
+
+	glClearColor(1.0f, 1.0, 1.0, 1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
 	srand(time(NULL));
-	double lastTime = glfwGetTime(), duration = 0.0f, dScreenColorR = 0.0f, dScreenColorG = 0.0f, dScreenColorB = 0.0f;
+	double lastTime = glfwGetTime(), duration = 0.0f;
+	float fScreenColorR = 0.0f, fScreenColorG = 0.0f, fScreenColorB = 0.0f;
 	do
 	{
 		double currentTime = glfwGetTime();
-		double Tick = currentTime - lastTime;
+		float Tick = (float)(currentTime - lastTime);
 		lastTime = currentTime;
 
 
@@ -30,14 +57,13 @@ int main()
 		if (duration > 1.0f)
 		{
 			duration = 0.0f;
-			dScreenColorR = (double)rand() / (RAND_MAX);
-			dScreenColorG = (double)rand() / (RAND_MAX);
-			dScreenColorB = (double)rand() / (RAND_MAX);
+			fScreenColorR = (float)rand() / (RAND_MAX);
+			fScreenColorG = (float)rand() / (RAND_MAX);
+			fScreenColorB = (float)rand() / (RAND_MAX);
 		}
-
-		glClearColor(dScreenColorR, dScreenColorG, dScreenColorB, 1.0f);
-
-
+		
+		pPartileSystem->Process(Tick);
+		pPartileSystem->Render(Tick, matView, matProj);
 
 		// Swap buffers
 		glfwSwapBuffers(pWindow->GetWindowHandle());

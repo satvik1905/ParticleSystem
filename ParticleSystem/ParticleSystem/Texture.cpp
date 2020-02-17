@@ -70,10 +70,10 @@ bool nsParticleSystem::Texture::LoadTexture(const char * _pFilePath)
 	}
 
 	// Create texture
-	glGenTextures(1, &m_unTextureID);
+	glGenTextures(1, &m_unTexture);
 
 	// "Bind" the newly created texture : all future texture functions will modify this texture
-	glBindTexture(GL_TEXTURE_2D, m_unTextureID);
+	glBindTexture(GL_TEXTURE_2D, m_unTexture);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	unsigned int blockSize = (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT) ? 8 : 16;
@@ -97,4 +97,9 @@ bool nsParticleSystem::Texture::LoadTexture(const char * _pFilePath)
 	free(buffer);
 
 	return true;
+}
+
+unsigned int nsParticleSystem::Texture::GetTexture()
+{
+	return m_unTexture;
 }

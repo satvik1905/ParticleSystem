@@ -17,8 +17,11 @@ namespace nsParticleSystem
 		~Shader();
 
 		bool Initialize(const char *_pShaderVSFilePath, const char *_pShaderPSFilePath);
+		
+		void SetShader();
 		void SetMVPMatrix(glm::mat4 _matMVP);
 		void SetColor(glm::vec3 _vColor);
 		void SetTexture(unsigned int _Texture);
+		
 	};
 }

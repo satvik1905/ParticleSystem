@@ -99,6 +99,7 @@ bool nsParticleSystem::Shader::Initialize(const char *_pShaderVSFilePath, const 
 		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
 		glGetProgramInfoLog(m_unShaderID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
 		printf("%s\n", &ProgramErrorMessage[0]);
+		return false;
 	}
 
 
@@ -122,6 +123,11 @@ bool nsParticleSystem::Shader::Initialize(const char *_pShaderVSFilePath, const 
 	return true;
 }
 
+void nsParticleSystem::Shader::SetShader()
+{
+	glUseProgram(m_unShaderID);
+}
+
 void nsParticleSystem::Shader::SetMVPMatrix(glm::mat4 _matMVP)
 {
 	glUniformMatrix4fv(m_unMatrixMVPID, 1, GL_FALSE, &_matMVP[0][0]);
@@ -137,6 +143,3 @@ void nsParticleSystem::Shader::SetTexture(unsigned int _Texture)
 	glBindTexture(GL_TEXTURE_2D, _Texture);
 	glUniform1i(m_unTextureID, 0);
 }
-
-
- 

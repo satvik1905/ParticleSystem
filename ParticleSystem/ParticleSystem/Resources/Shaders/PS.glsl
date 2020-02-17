@@ -1,14 +1,15 @@
 #version 330 core
 
 //Input Fragment Shader : Texture Coordinate
-in vec2 vTexUV;
+//in vec2 vTexUV;
+//in vec3 vColor;
 
 //Output Fragment Shader : Final Pixel Color
 out vec4 PixelColor;
 
 
-//Texture Sampler
-uniform sampler2D ParticleTexture;
+////Texture Sampler
+//uniform sampler2D ParticleTexture;
 
 //Particle Color
 uniform vec3 ParticleColor;
@@ -16,6 +17,7 @@ uniform vec3 ParticleColor;
 
 void main()
 {	
-	vec4 TextureColor = texture(ParticleTexture, vTexUV);
-	return TextureColor;
+	//vec4 TextureColor = texture(ParticleTexture, vTexUV);
+	//vec3 ColorEffect = vColor + ParticleColor;
+	PixelColor = vec4(ParticleColor, 1.0);//vec4(1.0f, 0.0f, 0.0f, 1.0f);	
 }
