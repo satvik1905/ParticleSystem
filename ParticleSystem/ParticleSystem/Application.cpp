@@ -10,7 +10,7 @@
 int main()
 {
 	nsParticleSystem::Window *pWindow = new nsParticleSystem::Window();
-	if (pWindow->Intialize() == false)
+	if (pWindow->Intialize(false) == false)
 	{
 		std::cout << "Failed to Create OpenGL Window";
 		return false;
@@ -32,7 +32,7 @@ int main()
 
 	int count = 0;
 	const GLFWvidmode *pScreen = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
-	float fAspectRatio = (float)pScreen->width / (float)pScreen->height;//1000.0f / 800.0f; //
+	float fAspectRatio = 1000.0f / 800.0f; ;// (float)pScreen->width / (float)pScreen->height;// //
 	//Set Projection Matrix
 	glm::mat4 matProj = glm::perspective(glm::radians(60.0f), fAspectRatio, 0.1f, 10000.0f);
 

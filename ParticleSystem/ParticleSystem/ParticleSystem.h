@@ -23,7 +23,7 @@ namespace nsParticleSystem
 
 	protected:
 		std::vector<Particle *>	m_vParticleContainer;
-		unsigned int			m_pVertexBuffer;
+		unsigned int			m_pVertexBuffer, m_pTextureBuffer;
 		Shader					*m_pShader = nullptr;
 		Texture					*m_pTexture = nullptr;
 		unsigned int			m_unVertexCount = 6;

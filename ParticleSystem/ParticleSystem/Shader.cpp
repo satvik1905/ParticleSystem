@@ -140,6 +140,12 @@ void nsParticleSystem::Shader::SetColor(glm::vec4 _vColor)
 
 void nsParticleSystem::Shader::SetTexture(unsigned int _Texture)
 {
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _Texture);
 	glUniform1i(m_unTextureID, 0);
+
+	////Set Texture
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, m_pTexture->GetTexture());
+	//glUniform1i(m_pShader->GetTextureId(), 0);
 }
