@@ -133,9 +133,9 @@ void nsParticleSystem::Shader::SetMVPMatrix(glm::mat4 _matMVP)
 	glUniformMatrix4fv(m_unMatrixMVPID, 1, GL_FALSE, &_matMVP[0][0]);
 }
 
-void nsParticleSystem::Shader::SetColor(glm::vec3 _vColor)
+void nsParticleSystem::Shader::SetColor(glm::vec4 _vColor)
 {
-	glUniform3f(m_unColorID, _vColor.r, _vColor.g, _vColor.b);
+	glUniform4f(m_unColorID, _vColor.r, _vColor.g, _vColor.b, _vColor.a);
 }
 
 void nsParticleSystem::Shader::SetTexture(unsigned int _Texture)

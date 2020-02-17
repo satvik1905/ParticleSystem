@@ -12,12 +12,12 @@ out vec4 PixelColor;
 //uniform sampler2D ParticleTexture;
 
 //Particle Color
-uniform vec3 ParticleColor;
+uniform vec4 ParticleColor;
 
 
 void main()
 {	
 	//vec4 TextureColor = texture(ParticleTexture, vTexUV);
 	//vec3 ColorEffect = vColor + ParticleColor;
-	PixelColor = vec4(ParticleColor, 1.0);//vec4(1.0f, 0.0f, 0.0f, 1.0f);	
+	PixelColor = ParticleColor;//vec4(ParticleColor, 1.0);//vec4(1.0f, 0.0f, 0.0f, 1.0f);	
 }

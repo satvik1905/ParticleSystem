@@ -17,16 +17,13 @@ namespace nsParticleSystem
 	public:
 		glm::vec3		m_vPos;
 		glm::vec3		m_vSpeed;
-		glm::vec3		m_vColor;
+		glm::vec4		m_vColor;
 		float			m_fSize;
 		float			m_fLife;
 		eTYPE 			m_eType;
 
-		void SetLife(float _fLife);
-		void SetSize(float _fSize);
-
 	public:
-		Particle(glm::vec3 _vPos, glm::vec3 _vColor);
+		Particle(glm::vec3 _vPos, glm::vec4 _vColor);
 		~Particle();
 
 		void Process(float _fTick);		

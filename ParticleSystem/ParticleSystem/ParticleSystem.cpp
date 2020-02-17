@@ -13,7 +13,7 @@ void nsParticleSystem::ParticleSystem::AddParticle()
 	float fPosX = ((float)rand() / (RAND_MAX)) + (rand() % (5) + (-3));
 	float fPosY = ((float)rand() / (RAND_MAX)) + (rand() % (5) + (-3));
 	glm::vec3 vPos = glm::vec3(fPosX, fPosY, 0);
-	glm::vec3 vColor = glm::vec3((float)rand() / (RAND_MAX), (float)rand() / (RAND_MAX), (float)rand() / (RAND_MAX));
+	glm::vec4 vColor = glm::vec4((float)rand() / (RAND_MAX), (float)rand() / (RAND_MAX), (float)rand() / (RAND_MAX), 1.0f);
 	
 	this->m_vParticleContainer.push_back(new Particle(vPos, vColor));
 }
@@ -110,22 +110,39 @@ void nsParticleSystem::ParticleSystem::Process(float _fTick)
 {
 	std::vector<Particle *>::iterator itr;
 	for (itr = m_vParticleContainer.begin(); itr != m_vParticleContainer.end(); itr++)
-		(*itr)->Process(_fTick);
+	{
+		Particle *pParticle = (*itr);
+		if (pParticle->m_fLife < 0.0f)
+			itr = m_vParticleContainer.erase(itr);
+		else
+			pParticle->Process(_fTick);
+	}
+
+	if (m_vParticleContainer.size() < 100)
+	{		
+		for (int i = 0; i < rand() % 10 + 1; i++)
+			this->AddParticle();
+	}
+		
 }
 
 
 void nsParticleSystem::ParticleSystem::Render(float _fTick, glm::mat4 _matView, glm::mat4 _matProjection)
 {	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_pShader->SetShader();
 	std::vector<Particle *>::iterator itr;
 	for (itr = m_vParticleContainer.begin(); itr != m_vParticleContainer.end(); itr++)
 	{
 		auto particle = (*itr);
 		
-		glm::vec3 vPos = particle->m_vPos;// glm::vec3(0.0f, 0.0f, 0.0f);// 
+		glm::vec3 vPos = particle->m_vPos;
+		glm::vec3 vSize = glm::vec3(particle->m_fSize, particle->m_fSize, 1.0f);
 
 		glm::mat4 matModel = glm::translate(glm::mat4(1.0f), glm::vec3(vPos.x, vPos.y, vPos.z));		
-		glm::mat4 MVP = _matProjection * _matView * matModel;
+		glm::mat4 matTransform = glm::scale(matModel, vSize);
+		glm::mat4 MVP = _matProjection * _matView * matTransform;
 
 		
 		m_pShader->SetColor(particle->m_vColor);

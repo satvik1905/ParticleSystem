@@ -20,7 +20,7 @@ namespace nsParticleSystem
 		
 		void SetShader();
 		void SetMVPMatrix(glm::mat4 _matMVP);
-		void SetColor(glm::vec3 _vColor);
+		void SetColor(glm::vec4 _vColor);
 		void SetTexture(unsigned int _Texture);
 		
 	};
