@@ -10,10 +10,11 @@ out vec4 PixelColor;
 // Values that stay constant for the whole mesh.
 uniform sampler2D ParticleTexture;
 
-uniform vec3 ParticleColor;
+uniform vec4 ParticleColor;
 
 
 void main()
 {	
 	PixelColor = texture( ParticleTexture, TexUV );
+	PixelColor.a += ParticleColor.a;
 }

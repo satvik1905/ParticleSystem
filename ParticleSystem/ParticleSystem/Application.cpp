@@ -10,7 +10,7 @@
 int main()
 {
 	nsParticleSystem::Window *pWindow = new nsParticleSystem::Window();
-	if (pWindow->Intialize(false) == false)
+	if (pWindow->Intialize() == false)
 	{
 		std::cout << "Failed to Create OpenGL Window";
 		return false;
@@ -32,7 +32,7 @@ int main()
 
 	int count = 0;
 	const GLFWvidmode *pScreen = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
-	float fAspectRatio = 1000.0f / 800.0f; ;// (float)pScreen->width / (float)pScreen->height;// //
+	float fAspectRatio = (float)pScreen->width / (float)pScreen->height;
 	//Set Projection Matrix
 	glm::mat4 matProj = glm::perspective(glm::radians(60.0f), fAspectRatio, 0.1f, 10000.0f);
 
@@ -42,8 +42,7 @@ int main()
 	glDepthFunc(GL_LESS);
 
 	srand(time(NULL));
-	double lastTime = glfwGetTime(), duration = 0.0f;
-	float fScreenColorR = 0.0f, fScreenColorG = 0.0f, fScreenColorB = 0.0f;
+	double lastTime = glfwGetTime(), duration = 0.0f;	
 	do
 	{
 		double currentTime = glfwGetTime();
@@ -54,14 +53,7 @@ int main()
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		duration += Tick;
-		if (duration > 1.0f)
-		{
-			duration = 0.0f;
-			fScreenColorR = (float)rand() / (RAND_MAX);
-			fScreenColorG = (float)rand() / (RAND_MAX);
-			fScreenColorB = (float)rand() / (RAND_MAX);
-		}
-
+		
 		pPartileSystem->Process(Tick);
 		pPartileSystem->Render(Tick, matView, matProj);
 

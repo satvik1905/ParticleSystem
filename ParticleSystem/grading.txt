@@ -1,1 +1,9 @@
-1- OpenGL Window Created
+Primary Goal
+1- mainting more than 500 particles at any instance
+2- Animation : Updating particle pos by its speed
+3- Applied Two Texture and change after 70% of Life of Particle spend 
+
+Secondary Goal
+1- Maintaining Life and Death of Particles.
+2- Tried to mimic particles as sparking of iron welding   
+3- Three different type of Particle : Fire -> High Speed and 50%Life, Smoke -> Mid Speed and 30%of Life and Fade -> dead speed and 5% of Life

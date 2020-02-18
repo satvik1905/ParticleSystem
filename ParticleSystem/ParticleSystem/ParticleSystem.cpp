@@ -10,7 +10,7 @@ void nsParticleSystem::ParticleSystem::AddParticle()
 {
 	float fPosX = ((float)rand() / (RAND_MAX)) + (rand() % (5) + (-3));
 	float fPosY = ((float)rand() / (RAND_MAX)) + (rand() % (5) + (-3));
-	glm::vec3 vPos = glm::vec3(0, 0, 0);
+	glm::vec3 vPos = glm::vec3(0, -1.0, 0);
 	glm::vec4 vColor = glm::vec4((float)rand() / (RAND_MAX), (float)rand() / (RAND_MAX), (float)rand() / (RAND_MAX), 1.0f);
 	
 	this->m_vParticleContainer.push_back(new Particle(vPos, vColor));
@@ -107,8 +107,8 @@ bool nsParticleSystem::ParticleSystem::Initialize()
 		
 		if ((m_pTexture->LoadTexture(".\\Resources\\Textures\\fire.dds") 
 			&& m_pTexture->LoadTexture(".\\Resources\\Textures\\smoke.dds")
-			&& m_pTexture->LoadTexture(".\\Resources\\Textures\\Fade1.dds")
-			&& m_pTexture->LoadTexture(".\\Resources\\Textures\\Fade2.dds")
+			/*&& m_pTexture->LoadTexture(".\\Resources\\Textures\\Fade1.dds")*/
+			/*&& m_pTexture->LoadTexture(".\\Resources\\Textures\\Fade2.dds")*/
 			) == false)
 			return false;
 		
@@ -134,7 +134,7 @@ void nsParticleSystem::ParticleSystem::Process(float _fTick)
 			pParticle->Process(_fTick);
 	}
 
-	if (m_vParticleContainer.size() < 100)
+	if (m_vParticleContainer.size() < 500)
 	{		
 		for (int i = 0; i < rand() % 10 + 1; i++)
 			this->AddParticle();
