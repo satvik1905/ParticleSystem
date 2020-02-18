@@ -7,6 +7,7 @@ nsParticleSystem::Particle::Particle(glm::vec3 _vPos, glm::vec4 _vColor)
 	m_vSpeed(0.0f, 0.0f, 0.0f),
 	m_vColor(_vColor),
 	m_fSize(0.0125),
+	//m_fSize(1.0f),
 	m_fLife(0.5)
 {
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <gl/glew.h>
 
 namespace nsParticleSystem
 {
@@ -10,13 +11,14 @@ namespace nsParticleSystem
 	{
 
 	protected:
-		unsigned int m_unTexture;
+		//unsigned int m_unTexture;
+		GLuint	m_TextureID;
 
 	public:
 		Texture();
 		~Texture();
 
 		bool LoadTexture(const char *_pFilePath);
-		unsigned int GetTexture();
+		GLuint GetTexture();
 	};
 }

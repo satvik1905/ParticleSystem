@@ -18,134 +18,119 @@ nsParticleSystem::Shader::~Shader()
 
 bool nsParticleSystem::Shader::Initialize(const char *_pShaderVSFilePath, const char *_pShaderPSFilePath)
 {
-	// Create the shaders
-	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+	// 1. Fetch Shader Code
+	std::string vertexCode;
+	std::string fragmentCode;
+	std::ifstream vShaderFile;
+	std::ifstream fShaderFile;
 
-	// Read the Vertex Shader code from the file
-	std::string VertexShaderCode;
-	std::ifstream VertexShaderStream(_pShaderVSFilePath, std::ios::in);
-	if (VertexShaderStream.is_open()) {
-		std::stringstream sstr;
-		sstr << VertexShaderStream.rdbuf();
-		VertexShaderCode = sstr.str();
-		VertexShaderStream.close();
+	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try
+	{
+
+		// open files
+		vShaderFile.open(".\\Resources\\Shaders\\VS.glsl", std::ios::in);
+		fShaderFile.open(".\\Resources\\Shaders\\PS.glsl", std::ios::in);
+
+		std::stringstream vShaderStream, fShaderStream;
+		vShaderStream << vShaderFile.rdbuf();
+		fShaderStream << fShaderFile.rdbuf();
+
+		vShaderFile.close();
+		fShaderFile.close();
+
+		// convert stream into string
+		vertexCode = vShaderStream.str();
+		fragmentCode = fShaderStream.str();
 	}
-	else {
-		printf("Impossible to open %s. Are you in the right directory ? Don't forget to read the FAQ !\n", _pShaderVSFilePath);
-		getchar();
+	catch (std::ifstream::failure e)
+	{
+		//std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		return false;
+	}
+	const char* vShaderCode = vertexCode.c_str();
+	const char* fShaderCode = fragmentCode.c_str();
+
+
+	// 2. compile shaders	
+	int success; char infoLog[512];
+	//vertex Shader
+	GLuint vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShaderId, 1, &vShaderCode, NULL);
+	glCompileShader(vertexShaderId);
+	glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(vertexShaderId, 512, NULL, infoLog);
+		//std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		return false;
+	};
+
+	//Pixel Shader
+	GLuint pixelShaderId = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(pixelShaderId, 1, &fShaderCode, NULL);
+	glCompileShader(pixelShaderId);
+	glGetShaderiv(pixelShaderId, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(pixelShaderId, 512, NULL, infoLog);
+		//std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+		return false;
+	};
+
+
+
+	//3. shader Program
+	m_ShaderId = glCreateProgram();
+	glAttachShader(m_ShaderId, vertexShaderId);
+	glAttachShader(m_ShaderId, pixelShaderId);
+	glLinkProgram(m_ShaderId);
+	// print linking errors if any
+	glGetProgramiv(m_ShaderId, GL_LINK_STATUS, &success);
+	if (!success)
+	{
+		glGetProgramInfoLog(m_ShaderId, 512, NULL, infoLog);
+		//std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 		return false;
 	}
 
-	// Read the Fragment Shader code from the file
-	std::string FragmentShaderCode;
-	std::ifstream FragmentShaderStream(_pShaderPSFilePath, std::ios::in);
-	if (FragmentShaderStream.is_open()) {
-		std::stringstream sstr;
-		sstr << FragmentShaderStream.rdbuf();
-		FragmentShaderCode = sstr.str();
-		FragmentShaderStream.close();
-	}
+	// Get a handle for our "Color" uniform
+	m_ColorID = glGetUniformLocation(m_ShaderId, "ParticleColor");
 
-	GLint Result = GL_FALSE;
-	int InfoLogLength;
+	// Get a handle for our "MVP" uniform
+	m_MatrixMVPID = glGetUniformLocation(m_ShaderId, "matrixModelViewProj");
 
+	// Get a handle for our "TextureSampler" uniform
+	m_TextureID = glGetUniformLocation(m_ShaderId, "ParticleTexture");
 
-	// Compile Vertex Shader
-	printf("Compiling shader : %s\n", _pShaderVSFilePath);
-	char const * VertexSourcePointer = VertexShaderCode.c_str();
-	glShaderSource(VertexShaderID, 1, &VertexSourcePointer, NULL);
-	glCompileShader(VertexShaderID);
-
-	// Check Vertex Shader
-	glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		std::vector<char> VertexShaderErrorMessage(InfoLogLength + 1);
-		glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-		printf("%s\n", &VertexShaderErrorMessage[0]);
-	}
-
-
-
-	// Compile Fragment Shader
-	printf("Compiling shader : %s\n", _pShaderPSFilePath);
-	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
-	glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer, NULL);
-	glCompileShader(FragmentShaderID);
-
-	// Check Fragment Shader
-	glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		std::vector<char> FragmentShaderErrorMessage(InfoLogLength + 1);
-		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-		printf("%s\n", &FragmentShaderErrorMessage[0]);
-	}
-
-
-
-	// Link the program
-	printf("Linking program\n");
-	m_unShaderID = glCreateProgram();
-	glAttachShader(m_unShaderID, VertexShaderID);
-	glAttachShader(m_unShaderID, FragmentShaderID);
-	glLinkProgram(m_unShaderID);
-
-	// Check the program
-	glGetProgramiv(m_unShaderID, GL_LINK_STATUS, &Result);
-	glGetProgramiv(m_unShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		std::vector<char> ProgramErrorMessage(InfoLogLength + 1);
-		glGetProgramInfoLog(m_unShaderID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
-		printf("%s\n", &ProgramErrorMessage[0]);
-		return false;
-	}
-
-
-	//uniform "Color" 
-	m_unColorID = glGetUniformLocation(m_unShaderID, "ParticleColor");
-
-	//uniform "MVP" 
-	m_unMatrixMVPID = glGetUniformLocation(m_unShaderID, "matrixModelViewProj");
-
-	//uniform "Texture"
-	m_unTextureID = glGetUniformLocation(m_unShaderID, "ParticleTexture");
-
-
-	glDetachShader(m_unShaderID, VertexShaderID);
-	glDetachShader(m_unShaderID, FragmentShaderID);
-
-	glDeleteShader(VertexShaderID);
-	glDeleteShader(FragmentShaderID);
-
+	// delete the shaders as they're linked into our program now and no longer necessery
+	glDeleteShader(vertexShaderId);
+	glDeleteShader(pixelShaderId);
 
 	return true;
 }
 
 void nsParticleSystem::Shader::SetShader()
 {
-	glUseProgram(m_unShaderID);
+	glUseProgram(m_ShaderId);
 }
 
 void nsParticleSystem::Shader::SetMVPMatrix(glm::mat4 _matMVP)
 {
-	glUniformMatrix4fv(m_unMatrixMVPID, 1, GL_FALSE, &_matMVP[0][0]);
+	glUniformMatrix4fv(m_MatrixMVPID, 1, GL_FALSE, &_matMVP[0][0]);
 }
 
 void nsParticleSystem::Shader::SetColor(glm::vec4 _vColor)
 {
-	glUniform4f(m_unColorID, _vColor.r, _vColor.g, _vColor.b, _vColor.a);
+	glUniform4f(m_ColorID, _vColor.r, _vColor.g, _vColor.b, _vColor.a);
 }
 
-void nsParticleSystem::Shader::SetTexture(unsigned int _Texture)
+void nsParticleSystem::Shader::SetTexture(GLuint _Texture)
 {
+	//Set Texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _Texture);
-	glUniform1i(m_unTextureID, 0);
-
-	////Set Texture
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, m_pTexture->GetTexture());
-	//glUniform1i(m_pShader->GetTextureId(), 0);
+	glUniform1i(m_TextureID, 0);
 }
+

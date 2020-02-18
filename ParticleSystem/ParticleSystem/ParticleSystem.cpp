@@ -2,11 +2,9 @@
 #include "Particle.h"
 #include "Shader.h"
 #include "Texture.h"
-#include <gl/glew.h>
 
-
-#include <glm/gtc/matrix_transform.hpp>
-
+#include <fstream>
+#include <sstream>
 
 void nsParticleSystem::ParticleSystem::AddParticle()
 {
@@ -65,7 +63,7 @@ void nsParticleSystem::ParticleSystem::InitializeBuffer()
 	glBindBuffer(GL_ARRAY_BUFFER, m_pVertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(pVertex), pVertex, GL_STATIC_DRAW);
 
-	const float pTextureUV[] = {
+	const GLfloat pTextureUV[] = {
 		 0.0f,  1.0f,
 		 1.0f,  1.0f,
 		 1.0f,  0.0f,
@@ -101,16 +99,15 @@ nsParticleSystem::ParticleSystem::~ParticleSystem()
 }
 
 bool nsParticleSystem::ParticleSystem::Initialize()
-{
-	
-	if (m_pShader->Initialize(".\\Resources\\Shaders\\VS.glsl", ".\\Resources\\Shaders\\PS.glsl"))
+{	
+	if(m_pShader->Initialize(".\\Resources\\Shaders\\VS.glsl", ".\\Resources\\Shaders\\PS.glsl"))
 	{
 		this->InitializeBuffer();
 
 		if (m_pTexture->LoadTexture(".\\Resources\\Textures\\test-dxt5.dds") == false)
-			return false;
+			return false;		
 
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 1; i++)
 			this->AddParticle();
 
 		return true;
@@ -141,8 +138,9 @@ void nsParticleSystem::ParticleSystem::Process(float _fTick)
 
 void nsParticleSystem::ParticleSystem::Render(float _fTick, glm::mat4 _matView, glm::mat4 _matProjection)
 {	
-	/*glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	m_pShader->SetShader();
 	std::vector<Particle *>::iterator itr;
 	for (itr = m_vParticleContainer.begin(); itr != m_vParticleContainer.end(); itr++)
@@ -156,20 +154,15 @@ void nsParticleSystem::ParticleSystem::Render(float _fTick, glm::mat4 _matView, 
 		glm::mat4 matTransform = glm::scale(matModel, vSize);
 		glm::mat4 MVP = _matProjection * _matView * matTransform;
 
-		
 		m_pShader->SetColor(particle->m_vColor);
 		m_pShader->SetMVPMatrix(MVP);
 		m_pShader->SetTexture(m_pTexture->GetTexture());
-		////Set Texture
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, m_pTexture->GetTexture());
-		//glUniform1i(m_pShader->GetTextureId(), 0);
-
+		
+		
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, m_pVertexBuffer);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		
-		
+				
 		glEnableVertexAttribArray(1);
 		glBindBuffer(GL_ARRAY_BUFFER, m_pTextureBuffer);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -177,6 +170,8 @@ void nsParticleSystem::ParticleSystem::Render(float _fTick, glm::mat4 _matView, 
 		glDrawArrays(GL_TRIANGLES, 0, m_unVertexCount);
 
 		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(1);		
 	}
 }
+
+

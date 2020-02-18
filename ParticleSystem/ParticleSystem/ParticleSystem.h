@@ -1,6 +1,10 @@
 #pragma once
-#include <glm/glm.hpp>
+#include "GL/glew.h"
 #include <vector>
+
+// Include GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace nsParticleSystem
 {
@@ -23,15 +27,15 @@ namespace nsParticleSystem
 
 	protected:
 		std::vector<Particle *>	m_vParticleContainer;
-		unsigned int			m_pVertexBuffer, m_pTextureBuffer;
+		unsigned int			m_pVertexBuffer;
+		unsigned int			m_pTextureBuffer;
 		Shader					*m_pShader = nullptr;
 		Texture					*m_pTexture = nullptr;
-		unsigned int			m_unVertexCount = 6;
-
+		unsigned int			m_unVertexCount = 6;		
 		
 		void		AddParticle();
-		void		InitializeBuffer();
-		
+		void		InitializeBuffer();	
+
 	public:
 		ParticleSystem();
 		~ParticleSystem();

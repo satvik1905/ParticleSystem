@@ -1,22 +1,18 @@
 #version 330 core
 
-//Input Vertex Shader
-layout(location = 0) in vec3 vPosition; //Vertex Position
-layout(location = 1) in vec2 vTexUV;	//Vertex Texture Coordinate
-//layout(location = 2) in vec3 vColor;	//Vertex Color 
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec3 vertexPosition;
+layout(location = 1) in vec2 TextureUV;
 
 
-//Output Vertex Shader
-out vec2 pTexUV;
-//out vec3 pColor;
+// Output data ; will be interpolated for each fragment.
+out vec2 TexUV;
 
 uniform mat4 matrixModelViewProj;
 
 void main()
 {
-
-	gl_Position =  matrixModelViewProj * vec4(vPosition, 1.0f);
-	pTexUV = vTexUV;
-	//pColor = vColor;
+	gl_Position =  matrixModelViewProj * vec4(vertexPosition,1);
+	TexUV = TextureUV;	
 }
 
