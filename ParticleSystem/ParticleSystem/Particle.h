@@ -8,9 +8,10 @@ namespace nsParticleSystem
 	protected:
 		enum eTYPE
 		{
-			EN_FIRE = 1,
-			EN_SMOKE = 2,
-			EN_WATER = 3
+			EN_FIRE = 0,
+			EN_SMOKE = 1,
+			EN_FADE1 = 2,
+			EN_FADE2 = 3
 		};
 
 	//protected:

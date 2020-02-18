@@ -70,10 +70,11 @@ bool nsParticleSystem::Texture::LoadTexture(const char * _pFilePath)
 	}
 
 	// Create one OpenGL texture	
-	glGenTextures(1, &m_TextureID);
+	GLuint	textureID;
+	glGenTextures(1, &textureID);
 
 	// "Bind" the newly created texture : all future texture functions will modify this texture
-	glBindTexture(GL_TEXTURE_2D, m_TextureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -99,13 +100,17 @@ bool nsParticleSystem::Texture::LoadTexture(const char * _pFilePath)
 		if (height < 1) height = 1;
 
 	}
+	m_vTextureIDList.push_back(textureID);
 
 	free(buffer);
 
 	return true;
 }
 
-unsigned int nsParticleSystem::Texture::GetTexture()
+GLuint nsParticleSystem::Texture::GetTexture(int _index)
 {
-	return m_TextureID;
+	if (_index < m_vTextureIDList.size())
+		return m_vTextureIDList[_index];
+
+	return 0;
 }

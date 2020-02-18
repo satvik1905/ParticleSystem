@@ -10,7 +10,7 @@ void nsParticleSystem::ParticleSystem::AddParticle()
 {
 	float fPosX = ((float)rand() / (RAND_MAX)) + (rand() % (5) + (-3));
 	float fPosY = ((float)rand() / (RAND_MAX)) + (rand() % (5) + (-3));
-	glm::vec3 vPos = glm::vec3(fPosX, fPosY, 0);
+	glm::vec3 vPos = glm::vec3(0, 0, 0);
 	glm::vec4 vColor = glm::vec4((float)rand() / (RAND_MAX), (float)rand() / (RAND_MAX), (float)rand() / (RAND_MAX), 1.0f);
 	
 	this->m_vParticleContainer.push_back(new Particle(vPos, vColor));
@@ -104,8 +104,15 @@ bool nsParticleSystem::ParticleSystem::Initialize()
 	{
 		this->InitializeBuffer();
 
-		if (m_pTexture->LoadTexture(".\\Resources\\Textures\\test-dxt5.dds") == false)
-			return false;		
+		
+		if ((m_pTexture->LoadTexture(".\\Resources\\Textures\\fire.dds") 
+			&& m_pTexture->LoadTexture(".\\Resources\\Textures\\smoke.dds")
+			&& m_pTexture->LoadTexture(".\\Resources\\Textures\\Fade1.dds")
+			&& m_pTexture->LoadTexture(".\\Resources\\Textures\\Fade2.dds")
+			) == false)
+			return false;
+		
+
 
 		for (int i = 0; i < 1; i++)
 			this->AddParticle();
@@ -156,7 +163,7 @@ void nsParticleSystem::ParticleSystem::Render(float _fTick, glm::mat4 _matView, 
 
 		m_pShader->SetColor(particle->m_vColor);
 		m_pShader->SetMVPMatrix(MVP);
-		m_pShader->SetTexture(m_pTexture->GetTexture());
+		m_pShader->SetTexture(m_pTexture->GetTexture(particle->m_eType));
 		
 		
 		glEnableVertexAttribArray(0);

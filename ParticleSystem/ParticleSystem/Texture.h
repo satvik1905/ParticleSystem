@@ -1,5 +1,6 @@
 #pragma once
 #include <gl/glew.h>
+#include <vector>
 
 namespace nsParticleSystem
 {
@@ -10,15 +11,14 @@ namespace nsParticleSystem
 	class Texture
 	{
 
-	protected:
-		//unsigned int m_unTexture;
-		GLuint	m_TextureID;
+	protected:				
+		std::vector<GLuint> m_vTextureIDList;
 
 	public:
 		Texture();
 		~Texture();
 
 		bool LoadTexture(const char *_pFilePath);
-		GLuint GetTexture();
+		GLuint GetTexture(int _index);		
 	};
 }
